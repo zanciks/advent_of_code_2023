@@ -2,7 +2,8 @@ use std::fs;
 
 fn main() {
     let mut contents = fs::read_to_string("src/prompt.txt").expect("Error reading prompt.txt");
-    part_one(contents);
+    part_one(contents.clone());
+    part_two(contents.clone());
 }
 
 fn part_one(contents: String) {
@@ -10,10 +11,22 @@ fn part_one(contents: String) {
     let lines = contents.split("\n");
     for line in lines {
         let line = replace_colors(line);
-        let (conditions_met, game_index) = parse_line(line);
-        if conditions_met == true {sum += game_index as i32}
+        let (index, max_red, max_green, max_blue) = parse_line(line);
+        let conditions_met = check_conditions(max_red, max_green, max_blue);
+        if conditions_met == true {sum += index as i32}
     }
     println!("{}", sum)
+}
+
+fn part_two(contents: String) {
+    let mut sum: i32 = 0;
+    let lines = contents.split("\n");
+    for line in lines {
+        let line = replace_colors(line);
+        let (index, max_red, max_green, max_blue) = parse_line(line);
+        sum += calculate_set_power(max_red, max_green, max_blue);
+    }
+    println!("{}", sum);
 }
 
 fn replace_colors(line: &str) -> String {
@@ -27,7 +40,7 @@ fn replace_colors(line: &str) -> String {
     return line.clone();
 }
 
-fn parse_line(line: String) -> (bool, u8) {
+fn parse_line(line: String) -> (u8, u8, u8, u8) {
     let mut max_red: u8 = 0;
     let mut max_blue: u8 = 0;
     let mut max_green: u8 = 0;
@@ -45,12 +58,16 @@ fn parse_line(line: String) -> (bool, u8) {
             }
         }
     }
-    return check_conditions(index, max_red, max_green, max_blue);
+    return (index, max_red, max_green, max_blue);
 }
 
-fn check_conditions(index: u8, max_red: u8, max_green: u8, max_blue: u8) -> (bool, u8) {
+fn check_conditions(max_red: u8, max_green: u8, max_blue: u8) -> bool {
     if max_red <= 12 && max_green <= 13 && max_blue <= 14 {
-        return (true, index);
+        return true;
     }
-    return (false, index);
+    return false;
+}
+
+fn calculate_set_power(max_red: u8, max_green: u8, max_blue: u8) -> i32 {
+    return max_red as i32 * max_green as i32 * max_blue as i32
 }
