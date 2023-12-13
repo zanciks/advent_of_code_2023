@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let mut contents = fs::read_to_string("src/prompt.txt").expect("Error reading prompt.txt");
+    let contents = fs::read_to_string("src/prompt.txt").expect("Error reading prompt.txt");
     part_one(contents.clone());
     part_two(contents.clone());
 }
@@ -23,7 +23,7 @@ fn part_two(contents: String) {
     let lines = contents.split("\n");
     for line in lines {
         let line = replace_colors(line);
-        let (index, max_red, max_green, max_blue) = parse_line(line);
+        let (_, max_red, max_green, max_blue) = parse_line(line);
         sum += calculate_set_power(max_red, max_green, max_blue);
     }
     println!("{}", sum);
